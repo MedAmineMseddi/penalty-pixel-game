@@ -59,6 +59,13 @@ public class Ball {
     public double getX() { return x; }
     public double getY() { return y; }
 
+    // Inside Ball.java, add this getter:
+    public int getAnimIndex() { return animIndex; }
+
     public void setPosition(double x, double y) { this.x = x; this.y = y; }
     public boolean isMoving() { return moving; }
+    
+    // === FIX: ADDED MISSING SETTER ===
+    public void setMoving(boolean moving) { this.moving = moving; }
+    // =================================
 }

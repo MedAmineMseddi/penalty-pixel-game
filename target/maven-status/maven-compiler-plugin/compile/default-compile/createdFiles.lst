@@ -16,6 +16,7 @@ com\mygame\jms\JmsMatchClient.class
 com\mygame\server\RmiGameServer.class
 com\mygame\client\Ball.class
 com\mygame\client\GameLoop.class
+com\mygame\client\RenderSystem$1.class
 com\mygame\client\RenderSystem.class
 com\mygame\client\InputSystem.class
 com\mygame\client\GameState$1.class

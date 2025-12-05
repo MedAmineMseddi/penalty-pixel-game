@@ -5,10 +5,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 
 /**
  * Very small UI overlay controller for screens:
  * Landing -> Player select -> Game -> End
+ * IMPROVEMENT: Updated End screen to show scores.
  */
 public class UIController {
 
@@ -16,6 +19,7 @@ public class UIController {
     private final VBox landingPane;
     private final VBox selectPane;
     private final VBox endPane;
+    private final Label endScoreLabel; // New field to update score dynamically
 
     public UIController() {
         root = new StackPane();
@@ -24,6 +28,7 @@ public class UIController {
         landingPane = buildLanding();
         selectPane = buildSelect();
         endPane = buildEnd();
+        endScoreLabel = (Label) endPane.getChildren().get(1); // Get the dynamically updated label
 
         root.getChildren().addAll(landingPane);
     }
@@ -33,8 +38,9 @@ public class UIController {
         box.setAlignment(Pos.TOP_CENTER);
         box.setTranslateY(80);
         Label title = new Label("Penalty Pixel Game");
+        title.setFont(Font.font("Arial", FontWeight.BOLD, 36));
         Button start = new Button("Start (Local)");
-        start.setOnAction(e -> showSelect());
+        start.setOnAction(e -> hideAll()); // Start game immediately for local test
         Button quit = new Button("Quit");
         quit.setOnAction(e -> System.exit(0));
         box.getChildren().addAll(title, start, quit);
@@ -58,9 +64,11 @@ public class UIController {
         box.setAlignment(Pos.CENTER);
         box.setTranslateY(0);
         Label l = new Label("Game Over");
+        l.setFont(Font.font("Arial", FontWeight.BOLD, 48));
+        Label score = new Label("P1: 0 - P2: 0"); // Placeholder for dynamic score
         Button replay = new Button("Replay");
-        replay.setOnAction(e -> hideAll());
-        box.getChildren().addAll(l, replay);
+        replay.setOnAction(e -> System.exit(0)); // Simple exit for now
+        box.getChildren().addAll(l, score, replay);
         box.setVisible(false);
         return box;
     }
@@ -81,7 +89,11 @@ public class UIController {
         landingPane.setVisible(true);
     }
 
-    public void showEnd() {
+    /**
+     * Shows the end screen with final scores.
+     */
+    public void showEnd(int p1Score, int p2Score) {
+        endScoreLabel.setText(String.format("P1: %d - P2: %d", p1Score, p2Score));
         root.getChildren().clear();
         root.getChildren().add(endPane);
         endPane.setVisible(true);
@@ -92,6 +104,6 @@ public class UIController {
     }
 
     public void updateUI(GameState state) {
-        // Could display timers, instructions or highlight whose turn it is
+        // Since we now render status directly on the canvas (RenderSystem), this can remain empty.
     }
 }
