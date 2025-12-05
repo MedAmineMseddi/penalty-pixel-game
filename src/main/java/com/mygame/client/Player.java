@@ -58,4 +58,10 @@ public class Player {
     public double getY() { return y; }
 
     public int getPlayerId() { return playerId; }
+
+    private Direction chosenDirection = Direction.NONE;
+
+    public Direction getChosenDirection() { return chosenDirection; }
+    public void setChosenDirection(Direction dir) { this.chosenDirection = dir; }
+
 }
