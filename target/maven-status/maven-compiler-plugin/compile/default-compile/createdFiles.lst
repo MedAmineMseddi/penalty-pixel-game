@@ -9,6 +9,7 @@ com\mygame\server\RmiGameServer$GameRemoteImpl.class
 com\mygame\jms\JmsMatchServer.class
 com\mygame\client\GameWindow.class
 com\mygame\client\Direction.class
+com\mygame\client\Ball$1.class
 com\mygame\jms\JmsConstants.class
 com\mygame\client\GameState.class
 com\mygame\client\Main.class
@@ -19,4 +20,3 @@ com\mygame\client\GameLoop.class
 com\mygame\client\RenderSystem$1.class
 com\mygame\client\RenderSystem.class
 com\mygame\client\InputSystem.class
-com\mygame\client\GameState$1.class

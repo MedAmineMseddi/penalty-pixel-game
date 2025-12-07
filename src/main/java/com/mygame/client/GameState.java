@@ -3,6 +3,7 @@ package com.mygame.client;
 /**
  * Holds the state of a local match (players, ball, current shot, turn count)
  * IMPROVEMENT: Simplified input reading by separating direction selection and confirmation.
+ * FIX: Added player animation triggers and corrected the ball movement call.
  */
 public class GameState {
 
@@ -37,7 +38,9 @@ public class GameState {
     
     // Helper to reset the ball for the next shot
     private void resetBallPosition() {
-        ball.setPosition(GameWindow.WIDTH / 2.0, GameWindow.HEIGHT - 140);
+        // Ensure the ball resets to the striker's starting position (or slightly in front)
+        Player striker = (currentKickerId == 1) ? p1 : p2;
+        ball.setPosition(striker.getX(), striker.getY()); 
         ball.setMoving(false);
     }
 
@@ -69,7 +72,7 @@ public class GameState {
                 if (strikerConfirmed && keeper.getChosenDirection() != Direction.NONE) {
                     // Both players have committed, resolve the shot
                     resolveShot(striker, keeper);
-                    awaitingInput = false;         // Game enters animation phase
+                    awaitingInput = false;      // Game enters animation phase
                     awaitingPowerConfirmation = false;
                 }
             }
@@ -81,8 +84,11 @@ public class GameState {
                 currentKickerId = (currentKickerId == 1) ? 2 : 1;
                 p1.setStriker(!p1.isStriker()); // Swap roles
                 p2.setStriker(!p2.isStriker());
+                
+                // Reset states and animations
                 p1.resetTurn();
                 p2.resetTurn();
+                
                 resetBallPosition();
                 
                 awaitingInput = true;
@@ -114,7 +120,7 @@ public class GameState {
             
             // Update temporary selection for visualization
             if (dir != Direction.NONE) {
-                 striker.setDirectionSelection(dir);
+                striker.setDirectionSelection(dir);
             }
             
             // Confirm direction
@@ -148,12 +154,12 @@ public class GameState {
             
             // Update temporary selection for visualization
             if (dir != Direction.NONE) {
-                 keeper.setDirectionSelection(dir);
+                keeper.setDirectionSelection(dir);
             }
             
             // Confirm direction
             if (confirmed && keeper.getDirectionSelection() != Direction.NONE) {
-                 keeper.setChosenDirection(keeper.getDirectionSelection());
+                keeper.setChosenDirection(keeper.getDirectionSelection());
             }
         }
     }
@@ -165,8 +171,12 @@ public class GameState {
 
         System.out.println(striker.getName() + " shot: " + sDir + " at " + String.format("%.2f", power) + " power | Keeper dived: " + kDir);
 
+        // 1. Trigger Animations
+        striker.startAnimation(Player.ANIM_KICK_START_INDEX, Player.ANIM_KICK_FRAMES);
+        keeper.startAnimation(Player.ANIM_DIVE_START_INDEX, Player.ANIM_DIVE_FRAMES);
+
         if (sDir != kDir) {
-            // Goal (Power slightly affects the speed, not the result in this simple model)
+            // Goal 
             striker.addScore();
             System.out.println("GOAL! Score P1: " + p1.getScore() + ", P2: " + p2.getScore());
         } else {
@@ -174,17 +184,9 @@ public class GameState {
             System.out.println("Saved by keeper!");
         }
 
-        // Move ball visually toward direction using the chosen power
-        ball.kick(power, mapDirectionToAngle(sDir));
-    }
-
-    private double mapDirectionToAngle(Direction dir) {
-        return switch (dir) {
-            case LEFT -> 60;
-            case RIGHT -> 120;
-            case CENTER -> 90;
-            default -> 90;
-        };
+        // 2. Start Ball Movement
+        // This uses the improved logic from Ball.java to shoot up the screen (negative Y velocity)
+        ball.shoot(sDir, power);
     }
 
     // Getters for RenderSystem/UIController

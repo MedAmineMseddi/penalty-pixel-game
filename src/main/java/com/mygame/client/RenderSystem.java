@@ -2,8 +2,7 @@ package com.mygame.client;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView; // Added for slicing
-import javafx.scene.image.WritableImage; // Added for slicing
+import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -14,8 +13,8 @@ public class RenderSystem {
 
     private final GraphicsContext gc;
 
-    private Image fieldBackground; // NEW: Field Background
-    private Image ballSheet;       // NEW: Ball Sheet
+    private Image fieldBackground;
+    private Image ballSheet;
 
     private Image strikerSheet;
     private Image keeperSheet;
@@ -23,11 +22,12 @@ public class RenderSystem {
     // Arrays of sliced frames
     private Image[] strikerFrames;
     private Image[] keeperFrames;
-    private Image[] ballFrames;    // NEW: Ball Frames
+    private Image[] ballFrames;
 
-    // Assumed frame dimensions (adjust if your sprites are different)
-    public static final int FRAME_W = 48;
+    // Assumed frame dimensions 
+    public static final int FRAME_W = 32; 
     public static final int FRAME_H = 48;
+    
     public static final int BALL_FRAME_W = 32;
     public static final int BALL_FRAME_H = 32;
 
@@ -37,29 +37,36 @@ public class RenderSystem {
         loadSprites();
     }
 
+    // --- 1. SPRITE LOADING AND SLICING ---
+
     private void loadSprites() {
         try {
             // Load all sprite sheets
             InputStream isField = getClass().getResourceAsStream("/Field.png");
             InputStream isBall = getClass().getResourceAsStream("/Ball.png");
-            InputStream isStriker = getClass().getResourceAsStream("/keeper_sheet.png");
-            InputStream isKeeper = getClass().getResourceAsStream("/stricker_sheet.png"); // Check if these two names are swapped in your files
+            InputStream isStriker = getClass().getResourceAsStream("/striker_sheet.png"); 
+            InputStream isKeeper = getClass().getResourceAsStream("/keeper_sheet.png"); 
 
             fieldBackground = (isField != null) ? new Image(isField) : null;
             ballSheet = (isBall != null) ? new Image(isBall) : null;
             strikerSheet = (isStriker != null) ? new Image(isStriker) : null;
             keeperSheet = (isKeeper != null) ? new Image(isKeeper) : null;
 
+            // Slice the Player sheets (32x48)
+            strikerFrames = slice(strikerSheet, FRAME_W, FRAME_H);
+            keeperFrames = slice(keeperSheet, FRAME_W, FRAME_H);
+            
+            // Slice the Ball sheet (32x32)
+            ballFrames = slice(ballSheet, BALL_FRAME_W, BALL_FRAME_H);
+
         } catch (Exception e) {
-            System.err.println("Error loading sprites: " + e.getMessage());
-            // Set all to null if loading fails
-            fieldBackground = strikerSheet = keeperSheet = ballSheet = null;
+            System.err.println("Error loading or slicing sprites: " + e.getMessage());
+            e.printStackTrace();
+            // Ensure arrays are initialized to empty arrays on failure, not null
+            strikerFrames = new Image[0]; 
+            keeperFrames = new Image[0];
+            ballFrames = new Image[0];
         }
-        
-        // Slice the sprite sheets into frame arrays
-        strikerFrames = slice(strikerSheet, FRAME_W, FRAME_H);
-        keeperFrames = slice(keeperSheet, FRAME_W, FRAME_H);
-        ballFrames = slice(ballSheet, BALL_FRAME_W, BALL_FRAME_H); // Assuming ball frames are 32x32
     }
 
     /**
@@ -90,7 +97,165 @@ public class RenderSystem {
         return frames;
     }
 
-    // Paste this method into RenderSystem.java
+    // --- 2. MAIN RENDERING LOOP ---
+    
+    public void render(GameState state) {
+        renderBackground();
+
+        // Determine players and their roles
+        Player p1 = state.getPlayer1();
+        Player p2 = state.getPlayer2();
+        
+        // Use the correct frame array based on the player's role (striker or keeper)
+        if (p1 != null) {
+            Image[] frames = p1.isStriker() ? strikerFrames : keeperFrames;
+            drawPlayer(p1, frames);
+        }
+        
+        if (p2 != null) {
+            Image[] frames = p2.isStriker() ? strikerFrames : keeperFrames;
+            drawPlayer(p2, frames);
+        }
+        
+        // Draw input indicators (MUST be drawn over players)
+        if (state.getBall().isMoving() == false) {
+             drawInputIndicators(state);
+        }
+
+        // Draw ball (Pass the ball frames array)
+        Ball ball = state.getBall();
+        if (ball != null) {
+            drawBall(ball, ballFrames);
+        }
+        
+        // Draw scores / HUD (Last, so it's on top)
+        drawHud(state);
+    }
+
+
+    // --- 3. DRAWING HELPER METHODS ---
+
+    public void renderBackground() {
+        // Use the Field.png background if loaded
+        if (fieldBackground != null) {
+            // Scale and draw the background to fit the window
+            gc.drawImage(fieldBackground, 0, 0, GameWindow.WIDTH, GameWindow.HEIGHT);
+        } else {
+            // Fallback: draw simple green field (your existing code)
+            gc.setFill(Color.web("#2a7a2a"));
+            gc.fillRect(0, 0, GameWindow.WIDTH, GameWindow.HEIGHT);
+        }
+        
+        // Draw pitch lines (Goal area and posts)
+        gc.setStroke(Color.WHITE);
+        gc.setLineWidth(2);
+        // Goal area
+        gc.strokeRect(GameWindow.WIDTH / 2 - 220, GameWindow.HEIGHT - 420, 440, 300);
+        // Goal post outline (simplified)
+        gc.setFill(Color.LIGHTGRAY);
+        gc.fillRect(GameWindow.WIDTH / 2 - 100, 100, 200, 10);
+    }
+    
+    private void drawPlayer(Player p, Image[] frames) {
+        
+        // 1. Declare the frame variable first, initializing it to null
+        Image frame = null; 
+
+        // 2. Safely calculate the index
+        int index = p.getAnimationIndex();
+        
+        // 3. Assign the frame using an if statement (Handles frames == null or empty array)
+        if (frames != null && frames.length > 0 && index >= 0 && index < frames.length) {
+            frame = frames[index];
+        }
+        
+        double x = p.getX();
+        double y = p.getY();
+        
+        // Calculate scaled dimensions (2x size)
+        final double DRAW_W = FRAME_W * 2; // 64
+        final double DRAW_H = FRAME_H * 2; // 96
+        
+        // Calculate centered draw position
+        final double DRAW_X = x - (DRAW_W / 2); 
+        final double DRAW_Y = y - DRAW_H;
+        
+        // Draw player sprite/placeholder
+        if (frame != null) {
+            // Draw the frame using the calculated centered coordinates and scaled size
+            gc.drawImage(frame, DRAW_X, DRAW_Y, DRAW_W, DRAW_H); 
+        } else {
+            // Fallback placeholder rectangle (32x96 centered)
+            gc.setFill(p.isStriker() ? Color.DARKBLUE : Color.RED);
+            gc.fillRect(x - 16, y - 96, 32, 96); 
+        }
+        
+        // Draw selection highlight (adjusted for 36x100 box around the 64x96 sprite)
+        if (p.getChosenDirection() != Direction.NONE) {
+            gc.setStroke(Color.YELLOW);
+            gc.setLineWidth(3);
+            gc.strokeRect(DRAW_X - 2, DRAW_Y - 2, DRAW_W + 4, DRAW_H + 4); 
+        }
+    }
+    
+    private void drawBall(Ball ball, Image[] frames) {
+        
+        // 1. Declare the frame variable first
+        Image frame = null;
+
+        // 2. Safely calculate the index and assign the frame
+        int index = ball.getAnimIndex();
+        
+        if (frames.length > 0 && index >= 0 && index < frames.length) {
+            frame = frames[index];
+        }
+        
+        if (frame != null) {
+            gc.drawImage(frame, 
+                        ball.getX() - Ball.BALL_SIZE / 2, 
+                        ball.getY() - Ball.BALL_SIZE / 2,
+                        Ball.BALL_SIZE, Ball.BALL_SIZE);
+        } else {
+            // Placeholder circle for the ball
+            gc.setFill(Color.RED);
+            gc.fillOval(ball.getX() - Ball.BALL_SIZE / 2, ball.getY() - Ball.BALL_SIZE / 2, Ball.BALL_SIZE, Ball.BALL_SIZE);
+        }
+    }
+    
+    /**
+     * Draws a specific frame from the keeper sheet based on (i, j) indices.
+     * NOTE: This assumes the keeper is Player 2 in this simplified scenario, 
+     * but the logic should be used on the player designated as the keeper.
+     */
+    public void drawKeeperFrame(int i, int j, Player keeper) {
+        // 1. Calculate Source Coordinates (Top-left corner of the desired frame on the sheet)
+        double sourceX = j * FRAME_W; 
+        double sourceY = i * FRAME_H;
+
+        // 2. Define Drawn Dimensions (These should match the scaling used in drawPlayer)
+        final double DRAW_W = FRAME_W * 2; // 64
+        final double DRAW_H = FRAME_H * 2; // 96
+        
+        // 3. Define Destination Coordinates (Centered on keeper's position)
+        double x = keeper.getX();
+        double y = keeper.getY();
+        final double DRAW_X = x - (DRAW_W / 2); // Center X
+        final double DRAW_Y = y - DRAW_H;      // Place feet at Y
+
+        // 4. Draw the specific section of the sheet
+        if (keeperSheet != null) {
+            gc.drawImage(keeperSheet, 
+                         sourceX, sourceY, FRAME_W, FRAME_H, // Source rectangle (unscaled)
+                         DRAW_X, DRAW_Y, DRAW_W, DRAW_H);    // Destination rectangle (2x scaled)
+        } else {
+            // Fallback placeholder rectangle 
+            gc.setFill(Color.RED);
+            gc.fillRect(x - 16, y - 96, 32, 96);
+        }
+    }
+    
+    // --- 4. HUD AND INDICATOR METHODS ---
+    
     private void drawInputIndicators(GameState state) {
         Player striker = (state.getCurrentKickerId() == 1) ? state.getPlayer1() : state.getPlayer2();
         Player keeper = (state.getCurrentKickerId() == 1) ? state.getPlayer2() : state.getPlayer1();
@@ -111,7 +276,6 @@ public class RenderSystem {
         }
     }
 
-    // Paste this method into RenderSystem.java
     private void drawDirectionIndicator(Player p, Color color, Direction dir) {
         gc.setFont(Font.font("Arial", FontWeight.BOLD, 24));
         gc.setFill(color);
@@ -127,11 +291,9 @@ public class RenderSystem {
         double y = p.getY();
         
         // Place indicator above player
-        // NOTE: This calculation is rough; adjust the offset (-100) if needed.
         gc.fillText(text, x - text.length() * 4, y - 100);
     }
 
-    // Paste this method into RenderSystem.java
     private void drawPowerBar(Player striker) {
         double barX = striker.getX() - 100;
         double barY = striker.getY() + 120;
@@ -158,7 +320,6 @@ public class RenderSystem {
     }
 
 
-    // Paste this method into RenderSystem.java
     private void drawHud(GameState state) {
         Player p1 = state.getPlayer1();
         Player p2 = state.getPlayer2();
@@ -201,95 +362,4 @@ public class RenderSystem {
         gc.setFont(Font.font("Arial", FontWeight.BOLD, 28));
         gc.fillText(statusText, GameWindow.WIDTH / 2.0 - gc.getFont().getSize() * 4, 80);
     }
-
-    public void renderBackground() {
-        // Use the Field.png background if loaded
-        if (fieldBackground != null) {
-            // Scale and draw the background to fit the window
-            gc.drawImage(fieldBackground, 0, 0, GameWindow.WIDTH, GameWindow.HEIGHT);
-        } else {
-            // Fallback: draw simple green field (your existing code)
-            gc.setFill(Color.web("#2a7a2a"));
-            gc.fillRect(0, 0, GameWindow.WIDTH, GameWindow.HEIGHT);
-        }
-        
-        // Draw pitch lines (Goal area and posts)
-        gc.setStroke(Color.WHITE);
-        gc.setLineWidth(2);
-        // Goal area
-        gc.strokeRect(GameWindow.WIDTH / 2 - 220, GameWindow.HEIGHT - 420, 440, 300);
-        // Goal post outline (simplified)
-        gc.setFill(Color.LIGHTGRAY);
-        gc.fillRect(GameWindow.WIDTH / 2 - 100, 100, 200, 10);
-    }
-    
-    // ... (rest of the render method remains the same)
-    
-    public void render(GameState state) {
-        renderBackground();
-
-        // Draw players
-        Player p1 = state.getPlayer1();
-        Player p2 = state.getPlayer2();
-        if (p1 != null) drawPlayer(p1, (p1.isStriker() ? strikerFrames : keeperFrames));
-        if (p2 != null) drawPlayer(p2, (p2.isStriker() ? keeperFrames : strikerFrames)); // Roles are dynamic, so check which array to use
-        
-        // Draw input indicators (MUST be drawn over players)
-        if (state.getBall().isMoving() == false) {
-             drawInputIndicators(state);
-        }
-
-        // Draw ball (Pass the ball frames array)
-        Ball ball = state.getBall();
-        if (ball != null) {
-            drawBall(ball, ballFrames);
-        }
-        
-        // Draw scores / HUD (Last, so it's on top)
-        drawHud(state);
-    }
-    
-    // Updated drawPlayer signature to accept frames
-    private void drawPlayer(Player p, Image[] frames) {
-        // Get the current frame based on the player's animation index
-        Image frame = (frames.length > 0) ? frames[p.getAnimationIndex() % frames.length] : null;
-        
-        double x = p.getX();
-        double y = p.getY();
-        
-        // Draw player sprite/placeholder
-        if (frame != null) {
-            // Scale up the 48x48 sprite to 96x96 for better visibility
-            gc.drawImage(frame, x - FRAME_W, y - FRAME_H, FRAME_W * 2, FRAME_H * 2); 
-        } else {
-            // placeholder rectangle
-            gc.setFill(p.isStriker() ? Color.DARKBLUE : Color.RED);
-            gc.fillRect(x - 24, y - 48, 48, 96);
-        }
-        
-        // Draw selection highlight if committed (No change)
-        if (p.getChosenDirection() != Direction.NONE) {
-            gc.setStroke(Color.YELLOW);
-            gc.setLineWidth(3);
-            gc.strokeRect(x - 26, y - 50, 52, 100);
-        }
-    }
-    
-    // NEW drawBall method
-    private void drawBall(Ball ball, Image[] frames) {
-        Image frame = (frames.length > 0) ? frames[ball.getAnimIndex() % frames.length] : null;
-        
-        if (frame != null) {
-             gc.drawImage(frame, 
-                          ball.getX() - Ball.BALL_SIZE / 2, 
-                          ball.getY() - Ball.BALL_SIZE / 2,
-                          Ball.BALL_SIZE, Ball.BALL_SIZE);
-        } else {
-             // Placeholder circle for the ball
-             gc.setFill(Color.RED);
-             gc.fillOval(ball.getX() - Ball.BALL_SIZE / 2, ball.getY() - Ball.BALL_SIZE / 2, Ball.BALL_SIZE, Ball.BALL_SIZE);
-        }
-    }
-
-    // ... (rest of the class remains the same)
 }
