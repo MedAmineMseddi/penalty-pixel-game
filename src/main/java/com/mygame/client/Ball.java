@@ -15,7 +15,7 @@ public class Ball {
     // The amount of horizontal deviation for a 'Left' or 'Right' shot.
     public static final double MAX_DEVIATION_DEGREES = 20.0; // Angle from the center line (e.g., 20 degrees)
 
-    public static final int BALL_SIZE = 32;
+    public static final int BALL_SIZE = 100; // Size of the ball when rendered
 
     private double x, y;
     private double vx, vy;

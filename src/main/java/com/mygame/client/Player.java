@@ -48,10 +48,10 @@ public class Player {
 
         if (striker) {
             x = GameWindow.WIDTH / 2.0;
-            y = GameWindow.HEIGHT - 120;
+            y = GameWindow.HEIGHT - 120; // Striker position
         } else {
             x = GameWindow.WIDTH / 2.0;
-            y = 160;
+            y = 200; // Keeper position
         }
     }
 
@@ -138,7 +138,7 @@ public class Player {
         if (s) {
              y = GameWindow.HEIGHT - 120;
         } else {
-             y = 160;
+             y = 270;
         }
         setIdle(); // Ensure animation resets when role changes
     }

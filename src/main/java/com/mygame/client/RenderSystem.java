@@ -25,11 +25,11 @@ public class RenderSystem {
     private Image[] ballFrames;
 
     // Assumed frame dimensions 
-    public static final int FRAME_W = 32; 
-    public static final int FRAME_H = 48;
+    public static final int FRAME_W = 88; 
+    public static final int FRAME_H = 88;
     
-    public static final int BALL_FRAME_W = 32;
-    public static final int BALL_FRAME_H = 32;
+    public static final int BALL_FRAME_W = 352;
+    public static final int BALL_FRAME_H = 768;
 
 
     public RenderSystem(GraphicsContext gc) {
@@ -43,9 +43,9 @@ public class RenderSystem {
         try {
             // Load all sprite sheets
             InputStream isField = getClass().getResourceAsStream("/Field.png");
-            InputStream isBall = getClass().getResourceAsStream("/Ball.png");
-            InputStream isStriker = getClass().getResourceAsStream("/striker_sheet.png"); 
-            InputStream isKeeper = getClass().getResourceAsStream("/keeper_sheet.png"); 
+            InputStream isBall = getClass().getResourceAsStream("/Ball-no-Background.png");
+            InputStream isStriker = getClass().getResourceAsStream("/striker_sheet-removebg-preview.png"); 
+            InputStream isKeeper = getClass().getResourceAsStream("/keeper_sheet-removebg-preview.png"); 
 
             fieldBackground = (isField != null) ? new Image(isField) : null;
             ballSheet = (isBall != null) ? new Image(isBall) : null;
@@ -212,8 +212,8 @@ public class RenderSystem {
         
         if (frame != null) {
             gc.drawImage(frame, 
-                        ball.getX() - Ball.BALL_SIZE / 2, 
-                        ball.getY() - Ball.BALL_SIZE / 2,
+                        ball.getX() - Ball.BALL_SIZE / 1.8, 
+                        ball.getY() - Ball.BALL_SIZE / 3,
                         Ball.BALL_SIZE, Ball.BALL_SIZE);
         } else {
             // Placeholder circle for the ball
