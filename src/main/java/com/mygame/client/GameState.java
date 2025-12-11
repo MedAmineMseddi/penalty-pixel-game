@@ -11,6 +11,7 @@ public class GameState {
     private Ball ball;
     private final RenderSystem render;
     private final UIController ui;
+    private final RestClient restClient = new RestClient();
 
     private int currentKickerId = 1;
     private int round = 0;
@@ -93,7 +94,16 @@ public class GameState {
                 
                 awaitingInput = true;
                 round++;
-                if (round > 10) ui.showEnd(p1.getScore(), p2.getScore());
+                if (round > 10) {
+                    // Game Over Logic
+                    ui.showEnd(p1.getScore(), p2.getScore());
+                    
+                    // SOA INTEGRATION: Save scores to Database via REST
+                    // Only save non-zero scores or save both
+                    System.out.println("Uploading scores to REST API...");
+                    restClient.submitScore(p1.getName(), p1.getScore());
+                    restClient.submitScore(p2.getName(), p2.getScore());
+                }
             }
         }
     }

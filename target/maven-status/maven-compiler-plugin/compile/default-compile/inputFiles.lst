@@ -1,9 +1,12 @@
 C:\Users\Amine\Desktop\LSI3\TP_DAR_LSI3\TP1-DAR2025\ProjetDAR-SOA\penalty-pixel-game\src\main\java\com\mygame\server\RmiGameServer.java
 C:\Users\Amine\Desktop\LSI3\TP_DAR_LSI3\TP1-DAR2025\ProjetDAR-SOA\penalty-pixel-game\src\main\java\com\mygame\jms\JmsConstants.java
+C:\Users\Amine\Desktop\LSI3\TP_DAR_LSI3\TP1-DAR2025\ProjetDAR-SOA\penalty-pixel-game\src\main\java\com\mygame\soa\ScoreApiApplication.java
+C:\Users\Amine\Desktop\LSI3\TP_DAR_LSI3\TP1-DAR2025\ProjetDAR-SOA\penalty-pixel-game\src\main\java\com\mygame\soa\Score.java
 C:\Users\Amine\Desktop\LSI3\TP_DAR_LSI3\TP1-DAR2025\ProjetDAR-SOA\penalty-pixel-game\src\main\java\com\mygame\client\Player.java
 C:\Users\Amine\Desktop\LSI3\TP_DAR_LSI3\TP1-DAR2025\ProjetDAR-SOA\penalty-pixel-game\src\main\java\com\mygame\client\UIController.java
 C:\Users\Amine\Desktop\LSI3\TP_DAR_LSI3\TP1-DAR2025\ProjetDAR-SOA\penalty-pixel-game\src\main\java\com\mygame\client\WritableImageView.java
 C:\Users\Amine\Desktop\LSI3\TP_DAR_LSI3\TP1-DAR2025\ProjetDAR-SOA\penalty-pixel-game\src\main\java\com\mygame\client\Ball.java
+C:\Users\Amine\Desktop\LSI3\TP_DAR_LSI3\TP1-DAR2025\ProjetDAR-SOA\penalty-pixel-game\src\main\java\com\mygame\soa\ScoreController.java
 C:\Users\Amine\Desktop\LSI3\TP_DAR_LSI3\TP1-DAR2025\ProjetDAR-SOA\penalty-pixel-game\src\main\java\com\mygame\client\InputSystem.java
 C:\Users\Amine\Desktop\LSI3\TP_DAR_LSI3\TP1-DAR2025\ProjetDAR-SOA\penalty-pixel-game\src\main\java\com\mygame\jms\JmsMatchClient.java
 C:\Users\Amine\Desktop\LSI3\TP_DAR_LSI3\TP1-DAR2025\ProjetDAR-SOA\penalty-pixel-game\src\main\java\com\mygame\client\Direction.java
@@ -14,3 +17,5 @@ C:\Users\Amine\Desktop\LSI3\TP_DAR_LSI3\TP1-DAR2025\ProjetDAR-SOA\penalty-pixel-
 C:\Users\Amine\Desktop\LSI3\TP_DAR_LSI3\TP1-DAR2025\ProjetDAR-SOA\penalty-pixel-game\src\main\java\com\mygame\client\GameState.java
 C:\Users\Amine\Desktop\LSI3\TP_DAR_LSI3\TP1-DAR2025\ProjetDAR-SOA\penalty-pixel-game\src\main\java\com\mygame\client\Main.java
 C:\Users\Amine\Desktop\LSI3\TP_DAR_LSI3\TP1-DAR2025\ProjetDAR-SOA\penalty-pixel-game\src\main\java\com\mygame\client\GameLoop.java
+C:\Users\Amine\Desktop\LSI3\TP_DAR_LSI3\TP1-DAR2025\ProjetDAR-SOA\penalty-pixel-game\src\main\java\com\mygame\client\RestClient.java
+C:\Users\Amine\Desktop\LSI3\TP_DAR_LSI3\TP1-DAR2025\ProjetDAR-SOA\penalty-pixel-game\src\main\java\com\mygame\soa\ScoreRepository.java

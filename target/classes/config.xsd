@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+    <!-- Root element -->
+    <xsd:element name="gameConfig">
+        <xsd:complexType>
+            <xsd:sequence>
+
+                <!-- Player section -->
+                <xsd:element name="players">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="player">
+                                <xsd:complexType>
+                                    <xsd:attribute name="speed" type="xsd:int" use="required"/>
+                                    <xsd:attribute name="width" type="xsd:int" use="required"/>
+                                </xsd:complexType>
+                            </xsd:element>
+
+                            <xsd:element name="goalkeeper">
+                                <xsd:complexType>
+                                    <xsd:attribute name="speed" type="xsd:int" use="required"/>
+                                    <xsd:attribute name="width" type="xsd:int" use="required"/>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+
+                <!-- Ball -->
+                <xsd:element name="ball">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="minPower" type="xsd:int"/>
+                            <xsd:element name="maxPower" type="xsd:int"/>
+                            <xsd:element name="color" type="xsd:string"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+
+                <!-- Goal size -->
+                <xsd:element name="goal">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="height" type="xsd:int"/>
+                            <xsd:element name="width" type="xsd:int"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+
+                <!-- Rounds -->
+                <xsd:element name="rounds" type="xsd:int"/>
+
+                <!-- Difficulty -->
+                <xsd:element name="difficulty">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="level" type="xsd:string"/>
+                            <xsd:element name="keeperReaction" type="xsd:float"/>
+                            <xsd:element name="maxTimeToShoot" type="xsd:int"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+</xsd:schema>

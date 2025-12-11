@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<gameConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:noNamespaceSchemaLocation="config.xsd">
+
+    <players>
+        <player speed="8" width="5" />
+        <goalkeeper speed="6" width="7" />
+    </players>
+
+    <ball>
+        <minPower>5</minPower>
+        <maxPower>20</maxPower>
+        <color>#FFFFFF</color>
+    </ball>
+
+    <goal>
+        <height>100</height>
+        <width>80</width>
+    </goal>
+
+    <rounds>5</rounds>
+
+    <difficulty>
+        <level>Normal</level>
+        <keeperReaction>1.2</keeperReaction>
+        <maxTimeToShoot>3500</maxTimeToShoot>
+    </difficulty>
+
+</gameConfig>

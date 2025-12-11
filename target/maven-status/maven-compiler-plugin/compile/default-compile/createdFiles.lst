@@ -1,6 +1,7 @@
 com\mygame\client\Player.class
 com\mygame\client\WritableImageView.class
 com\mygame\client\GameLoop$1.class
+com\mygame\soa\Score.class
 com\mygame\soa\ScoreboardController$MatchResult.class
 com\mygame\soa\ScoreboardController.class
 com\mygame\server\RmiGameServer$GameRemote.class
@@ -8,6 +9,8 @@ com\mygame\client\UIController.class
 com\mygame\server\RmiGameServer$GameRemoteImpl.class
 com\mygame\jms\JmsMatchServer.class
 com\mygame\client\GameWindow.class
+com\mygame\soa\ScoreController.class
+com\mygame\soa\ScoreRepository.class
 com\mygame\client\Direction.class
 com\mygame\client\Ball$1.class
 com\mygame\jms\JmsConstants.class
@@ -15,8 +18,10 @@ com\mygame\client\GameState.class
 com\mygame\client\Main.class
 com\mygame\jms\JmsMatchClient.class
 com\mygame\server\RmiGameServer.class
+com\mygame\soa\ScoreApiApplication.class
 com\mygame\client\Ball.class
 com\mygame\client\GameLoop.class
 com\mygame\client\RenderSystem$1.class
 com\mygame\client\RenderSystem.class
+com\mygame\client\RestClient.class
 com\mygame\client\InputSystem.class

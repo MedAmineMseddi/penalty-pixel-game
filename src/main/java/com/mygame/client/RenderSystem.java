@@ -256,6 +256,8 @@ public class RenderSystem {
     
     // --- 4. HUD AND INDICATOR METHODS ---
     
+    // Inside RenderSystem.java
+
     private void drawInputIndicators(GameState state) {
         Player striker = (state.getCurrentKickerId() == 1) ? state.getPlayer1() : state.getPlayer2();
         Player keeper = (state.getCurrentKickerId() == 1) ? state.getPlayer2() : state.getPlayer1();
@@ -270,10 +272,11 @@ public class RenderSystem {
             drawDirectionIndicator(keeper, Color.CYAN, keeper.getDirectionSelection());
         }
         
-        // 3. Striker Power Bar (After direction is chosen)
-        if (state.isAwaitingPowerConfirmation()) {
+        // 3. Striker Power Bar (DELETE THIS BLOCK)
+        /* if (state.isAwaitingPowerConfirmation()) {
             drawPowerBar(striker);
         }
+        */ 
     }
 
     private void drawDirectionIndicator(Player p, Color color, Direction dir) {
@@ -293,32 +296,6 @@ public class RenderSystem {
         // Place indicator above player
         gc.fillText(text, x - text.length() * 4, y - 100);
     }
-
-    private void drawPowerBar(Player striker) {
-        double barX = striker.getX() - 100;
-        double barY = striker.getY() + 120;
-        double barWidth = 200;
-        double barHeight = 20;
-        
-        double power = striker.getCurrentPower();
-        double fillWidth = barWidth * power;
-        
-        // Background
-        gc.setStroke(Color.WHITE);
-        gc.setLineWidth(2);
-        gc.strokeRect(barX, barY, barWidth, barHeight);
-        
-        // Fill (Green to Red based on power)
-        Color fill = Color.hsb(power * 120, 1.0, 1.0); // Hue shift for color change
-        gc.setFill(fill);
-        gc.fillRect(barX, barY, fillWidth, barHeight);
-        
-        // Label
-        gc.setFill(Color.WHITE);
-        gc.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
-        gc.fillText("POWER (" + (int)(power * 100) + "%)", barX + 5, barY - 5);
-    }
-
 
     private void drawHud(GameState state) {
         Player p1 = state.getPlayer1();
